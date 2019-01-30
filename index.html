@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>rest</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <form action="">
+            <div class="form-group">
+                <label for="sum">Сума:</label>
+                <input type="number" class="form-control" id="sum" placeholder="Введіть суму" name="sum" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="price">Ціна:</label>
+                <input type="number" class="form-control" id="price" placeholder="Введіть ціну" name="price" step="0.01">
+            </div>
+            <button type="button" id="rest" class="btn btn-primary">Повернути решту</button>
+        </form>
+        <p id="result"></p>
+    </div>
+    <script type="text/javascript">
+    let rest = document.getElementById("rest");
+    rest.addEventListener("click", function() {
+        const nominal = [50, 25, 10, 5, 1],
+            sum = document.getElementById("sum"),
+            price = document.getElementById("price");
+        let res = "",
+            difference = 0,
+            i = 0;
+        if (!checkInputs(price, sum)) return;
+        difference = (sum.value * 1000 - price.value * 1000) / 1000;
+        dollars = Math.floor(difference);
+        cents = (difference * 1000 - dollars * 1000) / 10;
+        if (!dollars) {
+            document.getElementById("result").innerHTML = `Ваша решта: ${cents} цент. (по номіналу `;
+        } else {
+            document.getElementById("result").innerHTML = `Ваша решта: ${dollars} долари ${rightCents(cents)} (по номіналу ${dollars} долари`;
+        }
+        remant(cents, nominal[i]);
+        document.getElementById("result").innerHTML += ` ${res} )`;
+   
+
+    function checkInputs(price, sum) {
+        if (!sum.value || !price.value) {
+            price.value = "Введіть суму";
+            sum.value = "Введіть число";
+            return 0;
+        }
+        let numb_price = parseFloat(price.value),
+            numb_sum = parseFloat(sum.value),
+            erorr = 0;
+
+        if ((numb_price * 1000 % 10).toFixed(2) != 0 || numb_price < 0) {
+            price.value = "";
+            price.placeholder = "Введіть число кратне 0.01 та >  0";
+            price.focus();
+            erorr++;
+        }
+        if ((numb_sum * 1000 % 10).toFixed(2) != 0 || numb_sum < numb_price) {
+            console.log((numb_sum * 1000 % 10).toFixed(2));
+            sum.value = "";
+            sum.placeholder = "Введіть число кратне 0.01 та >= ніж ціна";
+            sum.focus();
+            erorr++;
+        }
+        if (erorr > 0) return 0;
+        return 1;
+    }
+
+
+
+    function remant(numb, divider) {
+        let counter = 0;
+        if (numb < 5) {
+            console.log(res, numb);
+            if (numb != 0) res += `1 цент (${Math.round(numb)} шт.)`;
+            return;
+        }
+        while (true) {
+            if (numb - divider >= 0) {
+                console.log(numb, divider);
+                counter++;
+                numb -= divider;
+
+            } else break;
+
+        }
+
+        if (counter > 0) res += ` ${divider} центів (${counter} шт. )`;
+        remant(numb, nominal[++i]);
+
+    }
+
+
+    function rightCents(cents) {
+        if (cents === 1) return `1 цент`;
+        return `${cents} центів`;
+    }
+
+});
+    </script>
+</body>
+
+</html>
